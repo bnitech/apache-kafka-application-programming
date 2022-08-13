@@ -22,6 +22,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.apache.kafka:kafka-streams'
+    implementation 'org.apache.kafka:connect-api'
     implementation 'org.slf4j:slf4j-simple'
 
     compileOnly 'org.projectlombok:lombok'
