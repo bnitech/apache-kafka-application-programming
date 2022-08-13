@@ -35,6 +35,12 @@ dependencies {
     testImplementation 'org.springframework.kafka:spring-kafka-test'
 }
 
+jar {
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it)}
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }
