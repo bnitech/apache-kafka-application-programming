@@ -6,5 +6,4 @@ spring:
     consumer:
       bootstrap-servers: my-kafka:9092
     listener:
-      ack-mode: MANUAL_IMMEDIATE
-      type: SINGLE
+      type: BATCH
