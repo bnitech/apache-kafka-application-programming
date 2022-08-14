@@ -1,18 +1,20 @@
-package com.bnitech.apachekafkaapplicationprogramming;
+package com.bnitech.apachekafkaapplicationprogramming.old;
 
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.kstream.GlobalKTable;
 import org.apache.kafka.streams.kstream.KStream;
 
 import java.util.Properties;
 
-public class SimpleStreamsApplication {
+public class KStreamJoinGlobalKTable {
     private static String APPLICATION_NAME = "streams-application";
-    private static String BOOTSTRAP_SERVERS = "my=kafka:9092";
-    private static String STREAM_LOG = "stream_log";
-    private static String STREAM_LOG_COPY = "stream_log_copy";
+    private static String BOOTSTRAP_SERVERS = "my-kafka:9092";
+    private static String ADDRESS_GLOBAL_TABLE = "address_v2";
+    private static String ORDER_STREAM = "order";
+    private static String ORDER_JOIN_STREAM = "order_join";
 
     public static void main(String[] args) {
         Properties props = new Properties();
@@ -22,8 +24,15 @@ public class SimpleStreamsApplication {
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 
         StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, String> streamLog = builder.stream(STREAM_LOG);
-        streamLog.to(STREAM_LOG_COPY);
+        GlobalKTable<String, String> addressGlobalTable = builder.globalTable(ADDRESS_GLOBAL_TABLE);
+        KStream<String, String> orderStream = builder.stream(ORDER_STREAM);
+
+        orderStream.join(
+                           addressGlobalTable,
+                           (orderKey, orderValue) -> orderKey,
+                           (order, address) -> order + " send to " + address
+                   )
+                   .to(ORDER_JOIN_STREAM);
 
         KafkaStreams streams = new KafkaStreams(builder.build(), props);
         streams.start();

@@ -1,4 +1,4 @@
-package com.bnitech.apachekafkaapplicationprogramming;
+package com.bnitech.apachekafkaapplicationprogramming.old;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.connector.Task;

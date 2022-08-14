@@ -1,4 +1,4 @@
-package com.bnitech.apachekafkaapplicationprogramming;
+package com.bnitech.apachekafkaapplicationprogramming.old;
 
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -8,11 +8,11 @@ import org.apache.kafka.streams.kstream.KStream;
 
 import java.util.Properties;
 
-public class StreamsFilter {
+public class SimpleStreamsApplication {
     private static String APPLICATION_NAME = "streams-application";
-    private static String BOOTSTRAP_SERVERS = "my-kafka:9092";
+    private static String BOOTSTRAP_SERVERS = "my=kafka:9092";
     private static String STREAM_LOG = "stream_log";
-    private static String STREAM_LOG_FILTER = "stream_log_filter";
+    private static String STREAM_LOG_COPY = "stream_log_copy";
 
     public static void main(String[] args) {
         Properties props = new Properties();
@@ -23,10 +23,7 @@ public class StreamsFilter {
 
         StreamsBuilder builder = new StreamsBuilder();
         KStream<String, String> streamLog = builder.stream(STREAM_LOG);
-//        KStream<String, String> filteredStream = streamLog.filter((key, value) -> value.length() > 5);
-//        filteredStream.to(STREAM_LOG_FILTER);
-
-        streamLog.filter((key, value) -> value.length() > 5).to(STREAM_LOG_FILTER);
+        streamLog.to(STREAM_LOG_COPY);
 
         KafkaStreams streams = new KafkaStreams(builder.build(), props);
         streams.start();

@@ -1,19 +1,19 @@
-package com.bnitech.apachekafkaapplicationprogramming;
+package com.bnitech.apachekafkaapplicationprogramming.old;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.connect.connector.Task;
 import org.apache.kafka.connect.errors.ConnectException;
-import org.apache.kafka.connect.sink.SinkConnector;
+import org.apache.kafka.connect.source.SourceConnector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SingleFileSinkConnector extends SinkConnector {
+public class SingleFileSourceConnector extends SourceConnector {
 
-    protected Map<String, String> configProperties;
+    private Map<String, String> configProperties;
 
     @Override
     public String version() {
@@ -24,7 +24,7 @@ public class SingleFileSinkConnector extends SinkConnector {
     public void start(Map<String, String> props) {
         this.configProperties = props;
         try {
-            new SingleFileSinkConnectorConfig(props);
+            new SingleFileSourceConnectorConfig(props);
         } catch (ConfigException e) {
             throw new ConnectException(e.getMessage(), e);
         }
@@ -32,7 +32,7 @@ public class SingleFileSinkConnector extends SinkConnector {
 
     @Override
     public Class<? extends Task> taskClass() {
-        return SingleFileSinkTask.class;
+        return SingleFileSourceTask.class;
     }
 
     @Override
@@ -47,10 +47,11 @@ public class SingleFileSinkConnector extends SinkConnector {
 
     @Override
     public ConfigDef config() {
-        return SingleFileSinkConnectorConfig.CONFIG;
+        return SingleFileSourceConnectorConfig.CONFIG;
     }
 
     @Override
     public void stop() {
+
     }
 }

@@ -1,4 +1,4 @@
-package com.bnitech.apachekafkaapplicationprogramming;
+package com.bnitech.apachekafkaapplicationprogramming.old;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.connect.data.Schema;
