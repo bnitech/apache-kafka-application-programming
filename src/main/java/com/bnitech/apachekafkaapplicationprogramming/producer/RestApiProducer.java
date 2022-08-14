@@ -1,4 +1,4 @@
-package com.bnitech.apachekafkaapplicationprogramming;
+package com.bnitech.apachekafkaapplicationprogramming.producer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

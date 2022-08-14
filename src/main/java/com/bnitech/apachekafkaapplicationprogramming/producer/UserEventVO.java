@@ -1,4 +1,4 @@
-package com.bnitech.apachekafkaapplicationprogramming;
+package com.bnitech.apachekafkaapplicationprogramming.producer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

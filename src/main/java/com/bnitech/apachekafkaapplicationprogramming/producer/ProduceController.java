@@ -1,4 +1,4 @@
-package com.bnitech.apachekafkaapplicationprogramming;
+package com.bnitech.apachekafkaapplicationprogramming.producer;
 
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
