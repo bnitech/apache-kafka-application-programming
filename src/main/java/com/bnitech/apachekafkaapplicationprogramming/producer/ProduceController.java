@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "*", allowCredentials = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequiredArgsConstructor
 public class ProduceController {
     private final KafkaTemplate<String, String> kafkaTemplate;

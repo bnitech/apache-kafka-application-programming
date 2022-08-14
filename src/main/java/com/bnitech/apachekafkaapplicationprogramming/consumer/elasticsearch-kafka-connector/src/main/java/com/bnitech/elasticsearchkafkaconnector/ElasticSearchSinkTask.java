@@ -1,8 +1,7 @@
-package com.bnitech.apachekafkaapplicationprogramming.consumer;
+package com.bnitech.elasticsearchkafkaconnector;
 
-import com.bnitech.apachekafkaapplicationprogramming.consumer.config.ElasticSearchSinkConnectorConfig;
+import com.bnitech.elasticsearchkafkaconnector.config.ElasticSearchSinkConnectorConfig;
 import com.google.gson.Gson;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
@@ -17,18 +16,21 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.xcontent.XContentType;
+import org.elasticsearch.common.xcontent.XContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
-import static com.bnitech.apachekafkaapplicationprogramming.consumer.config.ElasticSearchSinkConnectorConfig.ES_CLUSTER_HOST;
-import static com.bnitech.apachekafkaapplicationprogramming.consumer.config.ElasticSearchSinkConnectorConfig.ES_CLUSTER_PORT;
-import static com.bnitech.apachekafkaapplicationprogramming.consumer.config.ElasticSearchSinkConnectorConfig.ES_INDEX;
+import static com.bnitech.elasticsearchkafkaconnector.config.ElasticSearchSinkConnectorConfig.ES_CLUSTER_HOST;
+import static com.bnitech.elasticsearchkafkaconnector.config.ElasticSearchSinkConnectorConfig.ES_CLUSTER_PORT;
+import static com.bnitech.elasticsearchkafkaconnector.config.ElasticSearchSinkConnectorConfig.ES_INDEX;
 
-@Slf4j
 public class ElasticSearchSinkTask extends SinkTask {
+    private final Logger logger = LoggerFactory.getLogger(ElasticSearchSinkTask.class);
+
 
     private ElasticSearchSinkConnectorConfig config;
     private RestHighLevelClient esClient;
@@ -47,8 +49,8 @@ public class ElasticSearchSinkTask extends SinkTask {
         }
 
         esClient = new RestHighLevelClient(
-                RestClient.builder(new HttpHost(config.getString(ES_CLUSTER_HOST), config.getInt(ES_CLUSTER_PORT)))
-        );
+                RestClient.builder(new HttpHost(config.getString(ES_CLUSTER_HOST),
+                        config.getInt(ES_CLUSTER_PORT))));
     }
 
     @Override
@@ -56,28 +58,26 @@ public class ElasticSearchSinkTask extends SinkTask {
         if (records.size() > 0) {
             BulkRequest bulkRequest = new BulkRequest();
             for (SinkRecord record : records) {
-                bulkRequest.add(
-                        new IndexRequest(config.getString(ES_INDEX)).source(
-                                new Gson().fromJson(record.value().toString(), Map.class),
-                                XContentType.JSON
-                        )
-                );
-                log.info("record : {}", record.value());
+                Gson gson = new Gson();
+                Map map = gson.fromJson(record.value().toString(), Map.class);
+                bulkRequest.add(new IndexRequest(config.getString(ES_INDEX))
+                        .source(map, XContentType.JSON));
+                logger.info("record : {}", record.value());
             }
 
-            esClient.bulkAsync(bulkRequest, RequestOptions.DEFAULT, new ActionListener<>() {
+            esClient.bulkAsync(bulkRequest, RequestOptions.DEFAULT, new ActionListener<BulkResponse>() {
                 @Override
                 public void onResponse(BulkResponse bulkResponse) {
                     if (bulkResponse.hasFailures()) {
-                        log.error(bulkResponse.buildFailureMessage());
+                        logger.error(bulkResponse.buildFailureMessage());
                     } else {
-                        log.info("bulk save success");
+                        logger.info("bulk save success");
                     }
                 }
 
                 @Override
                 public void onFailure(Exception e) {
-                    log.error(e.getMessage(), e);
+                    logger.error(e.getMessage(), e);
                 }
             });
         }
@@ -85,7 +85,7 @@ public class ElasticSearchSinkTask extends SinkTask {
 
     @Override
     public void flush(Map<TopicPartition, OffsetAndMetadata> offsets) {
-        log.info("flush");
+        logger.info("flush");
     }
 
     @Override
@@ -93,7 +93,7 @@ public class ElasticSearchSinkTask extends SinkTask {
         try {
             esClient.close();
         } catch (IOException e) {
-            log.info(e.getMessage(), e);
+            logger.info(e.getMessage(), e);
         }
     }
 }
