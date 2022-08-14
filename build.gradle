@@ -23,10 +23,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.apache.kafka:kafka-streams'
+    implementation 'org.apache.kafka:kafka-clients'
     implementation 'org.apache.kafka:connect-api'
     implementation 'com.google.code.gson:gson'
 
     compileOnly 'org.projectlombok:lombok'
+    compileOnly 'org.apache.hadoop:hadoop-client:3.3.4'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
