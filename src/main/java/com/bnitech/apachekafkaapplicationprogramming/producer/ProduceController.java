@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Slf4j
 @RestController
@@ -27,14 +27,14 @@ public class ProduceController {
                             @RequestParam(value = "color") String colorName,
                             @RequestParam(value = "user") String userName) {
 
+        final SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm::ss.SSSZZ");
+        Date now = new Date();
         String jsonColorLog = new Gson().toJson(UserEventVO.builder()
-                                                     .timestamp(
-                                                             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm::ss.SSSZZ").format(LocalDateTime.now())
-                                                     )
-                                                     .userAgent(userAgentName)
-                                                     .colorName(colorName)
-                                                     .userName(userName)
-                                                     .build());
+                                                           .timestamp(sdfDate.format(now))
+                                                           .userAgent(userAgentName)
+                                                           .colorName(colorName)
+                                                           .userName(userName)
+                                                           .build());
 
         kafkaTemplate.send("select-color", jsonColorLog).addCallback(new ListenableFutureCallback<>() {
             @Override
